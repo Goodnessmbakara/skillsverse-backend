@@ -5,10 +5,10 @@ import subprocess
 import sys
 
 
-def start_celery():
-    """Start Celery worker when Django server starts"""
-    print("Starting Celery worker...")
-    subprocess.Popen(["celery", "-A", "skillsverse_backend","flower"])
+# def start_celery():
+#     """Start Celery worker when Django server starts"""
+#     print("Starting Celery worker...")
+#     subprocess.Popen(["celery", "-A", "skillsverse_backend","flower"])
 
 
 def main():
@@ -26,5 +26,4 @@ def main():
 
 
 if __name__ == "__main__":
-    start_celery()
-    #main()
+    main()

@@ -15,12 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-# from django_tus.views import TusUpload
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    # path("api/user/", include("user.urls")),
-    path("api/job/", include("job.urls")),
-    # path("upload/", TusUpload.as_view(), name="tus_upload"),
-    # path("upload/<uuid:resource_id>", TusUpload.as_view(), name="tus_upload_chunks"),
+    # Documentation
+    path('api/docs/', SpectacularAPIView.as_view(), name='schema'),
+    path('', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    
+    path('api/users/', include('users.urls')),
+    path('api/jobs/', include('jobs.urls')),
 ]

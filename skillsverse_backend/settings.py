@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 
-# settings.py
+from datetime import timedelta
 
 import os
-
+from celery import Celery
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,14 +42,18 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "user",
-    "job",
-    "matching",
-    # "django_tus",
+    'users',
+    'jobs',
+    "drf_spectacular"
 ]
 
-# TUS_DESTINATION_DIR = "uploads"
-# TUS_UPLOAD_EXPIRES = 3600  # 1 hour
+INSTALLED_APPS += ["django_celery_beat", "django_celery_results"]
+
+# Media files configuration
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -82,8 +86,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'skillsverse_backend.wsgi.application'
 
 
-AUTH_USER_MODEL = "user.CustomUser"
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -113,7 +115,31 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+INSTALLED_APPS += ['rest_framework']
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'wallet_address',
+    'USER_ID_CLAIM': 'wallet_address',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Job Platform API',
+    'DESCRIPTION': 'Decentralized Job Platform with Wallet Authentication',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SCHEMA_PATH_PREFIX': r'/api/',
+    'COMPONENT_SPLIT_REQUEST': True,
+}
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -137,6 +163,14 @@ CELERY_RESULT_BACKEND = os.getenv(
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 
+
+CELERY_BEAT_SCHEDULE = {
+    'process-cvs-hourly': {
+        'task': 'jobs.tasks.scheduled_cv_processing',
+        'schedule': 3600,
+    },
+}
+
 # Job Expiry Setting
 JOB_EXPIRY_DAYS = 30
 
@@ -150,6 +184,7 @@ REDIS_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/0"
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/staticfiles/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
