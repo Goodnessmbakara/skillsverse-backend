@@ -7,7 +7,7 @@ from docx import Document
 from pathlib import Path
 from datetime import datetime
 from django.conf import settings
-from parser_app.models import Skill, CV, CVEducation, CVWorkExperience, CVContactInfo
+from jobs.models import Skill, CV, CVEducation, CVWorkExperience, CVContactInfo
 
 class CVParser:
     """Service class for parsing CVs and extracting information"""
