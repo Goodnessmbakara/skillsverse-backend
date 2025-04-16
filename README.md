@@ -1,8 +1,3 @@
-Here’s a clean and professional `README.md` for your backend project, tailored for your job marketplace platform with Docker support:
-
----
-
-```markdown
 # SkillsVerse Backend 🧠💼
 
 A smart job marketplace powered by AI and blockchain. This backend service enables secure job matching, automated job fetching, CV parsing, skill-based recommendations, and verified credential handling.

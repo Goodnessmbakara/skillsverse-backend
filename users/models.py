@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -7,18 +7,18 @@ from django.conf import settings
 import secrets
 
 class UserManager(BaseUserManager):
-    def create_user(self, wallet_address, password=1234, **extra_fields):
+    def create_user(self, wallet_address, **extra_fields):
         if not wallet_address:
             raise ValueError('The Wallet Address is required')
         user = self.model(wallet_address=wallet_address, **extra_fields)
-        user.set_password(password)
+        user.set_unusable_password()
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, wallet_address, password=None, **extra_fields):
+    def create_superuser(self, wallet_address, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        return self.create_user(wallet_address, password, **extra_fields)
+        return self.create_user(wallet_address, **extra_fields)
 
 class User(AbstractBaseUser, PermissionsMixin):
     USER_TYPES = (
@@ -32,6 +32,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     linkedin_url = models.URLField(blank=True, null=True)
     wallet_address = models.CharField(max_length=100, unique=True)
     nonce = models.CharField(max_length=100, default=secrets.token_hex(16))
+    last_nonce_refresh = models.DateTimeField(auto_now_add=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

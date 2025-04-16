@@ -18,7 +18,8 @@ from django.db.models import Q
 
 # Imported services
 from jobs.services.cv_parser import CVParser
-from jobs.services.job_recommender import JobRecommender
+print("I have gotten the CVPrser", CVParser)
+from ./services.job_recommender import JobRecommender
 
 # Logging setup
 logger = logging.getLogger(__name__)
@@ -133,7 +134,6 @@ def scheduled_cv_processing():
     if stats['failed_parsing'] > 0:
         # Send alert or log to monitoring system
         logger.warning(f"CV Processing Alert: {stats['failed_parsing']} CVs failed processing")
-
 
 
 # Scalability Optimizations for Large Datasets

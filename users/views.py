@@ -5,6 +5,24 @@ from django.contrib.auth import authenticate
 from .models import User
 from .serializers import UserSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+from drf_spectacular.utils import extend_schema
+
+class NonceView(APIView):
+    @extend_schema(
+        parameters=[],
+        responses={
+            200: {'description': 'Current nonce for wallet address'},
+            201: {'description': 'New user created with nonce'}
+        }
+    )
+    def get(self, request, wallet_address):
+        try:
+            user = User.objects.get(wallet_address__iexact=wallet_address)
+            return Response({'nonce': user.nonce})
+        except User.DoesNotExist:
+            user = User.objects.create_user(wallet_address=wallet_address)
+            return Response({'nonce': user.nonce}, status=status.HTTP_201_CREATED)
+
 
 class WalletSignInView(APIView):
     def post(self, request):
