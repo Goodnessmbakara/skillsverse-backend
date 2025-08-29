@@ -18,8 +18,8 @@ from django.db.models import Q
 
 # Imported services
 from jobs.services.cv_parser import CVParser
-print("I have gotten the CVPrser", CVParser)
-from ./services.job_recommender import JobRecommender
+print("I have gotten the CVParser", CVParser)
+from jobs.services.Job_recommender import JobRecommender
 
 # Logging setup
 logger = logging.getLogger(__name__)

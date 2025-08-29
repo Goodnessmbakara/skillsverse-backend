@@ -5,7 +5,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from eth_keys import keys
 from eth_hash.auto import keccak
 import secrets
-from drf_spectacular.utils import extend_schema_serializer
+from drf_spectacular.utils import extend_schema_serializer, extend_schema
 from drf_spectacular.types import OpenApiTypes
 
 from django.contrib.auth import get_user_model
@@ -13,10 +13,15 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 @extend_schema_serializer(
-    request_fields={
-        'wallet_address': OpenApiTypes.STR,
-        'signature': OpenApiTypes.STR,
-    }
+    examples=[
+        {
+            'name': 'Wallet Authentication',
+            'value': {
+                'wallet_address': '0x1234567890abcdef1234567890abcdef12345678',
+                'signature': '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678'
+            }
+        }
+    ]
 )
 
 class WalletAuthenticationBackend:

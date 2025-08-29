@@ -106,6 +106,7 @@ class JobRecommender:
             job = self.job_listings[idx]
             recommendation = JobRecommendation.objects.create(
                 cv=cv_obj, job=job, match_score=round(score * 100, 1)
+            )
             recommendations.append(recommendation)
         
         return recommendations
